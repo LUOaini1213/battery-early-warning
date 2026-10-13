@@ -1,0 +1,26 @@
+{
+  "raw_cell_counts": {
+    "2017-05-12": 46,
+    "2017-06-30": 48,
+    "2018-04-12": 46
+  },
+  "n_cells": 124,
+  "cells_per_batch": {
+    "2017-06-30": 43,
+    "2017-05-12": 41,
+    "2018-04-12": 40
+  },
+  "split_sizes": {
+    "primary_test": 43,
+    "train": 41,
+    "secondary_test": 40
+  },
+  "cells_with_cycle_numbering_1_to_100": 124,
+  "cycle_life_struct_vs_matlab_rule_n_equal": 124,
+  "cycle_life_struct_vs_matlab_rule_abs_diff_max": 0.0,
+  "n_cells_never_recorded_below_0p88": 81,
+  "cycle_life_min_max": [
+    148.0,
+    2237.0
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "tables": {
+    "cells": 124,
+    "cycles": 100501,
+    "early_features": 2480,
+    "knee_labels": 124
+  },
+  "templates": {
+    "01_cohort_fade_curves": {
+      "rows": 51
+    },
+    "02_knee_candidates": {
+      "rows": 124
+    },
+    "03_ir_vs_capacity": {
+      "rows": 124
+    },
+    "04_early_feature_ranking": {
+      "rows": 20
+    },
+    "05_survival_curve": {
+      "rows": 72
+    },
+    "06_data_quality": {
+      "rows": 124
+    },
+    "07_policy_leaderboard": {
+      "rows": 69
+    },
+    "08_early_failure_screen": {
+      "rows": 124
+    }
+  },
+  "n_templates": 8,
+  "sql_vs_python_variance_model_max_abs_diff_cycles": 0.0004972521368244998,
+  "knee_candidates_cells_flagged_before_eol": 124,
+  "knee_candidates_median_lead_to_eol": 145.5
+}

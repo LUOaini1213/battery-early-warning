@@ -1,0 +1,9 @@
+cell_id,order_idx,batch,policy,c1,q1,c2,split,cycle_life,carried_over
+syn0,0,synthetic,4C(80%)-4C,4.0,80.0,4.0,primary_test,180.0,False
+syn1,1,synthetic,5C(80%)-4C,5.0,80.0,4.0,train,260.0,False
+syn2,2,synthetic,6C(80%)-4C,6.0,80.0,4.0,primary_test,320.0,False
+syn3,3,synthetic,4C(80%)-4C,4.0,80.0,4.0,train,380.0,False
+syn4,4,synthetic,5C(80%)-4C,5.0,80.0,4.0,primary_test,450.0,False
+syn5,5,synthetic,6C(80%)-4C,6.0,80.0,4.0,train,520.0,False
+syn6,6,synthetic,4C(80%)-4C,4.0,80.0,4.0,primary_test,600.0,False
+syn7,7,synthetic,5C(80%)-4C,5.0,80.0,4.0,train,700.0,False

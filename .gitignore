@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+# raw and derived data never live in the repo
+data/
+*.mat
+*.zip
+*.h5
+*.parquet
+*.npz
+!tests/fixtures/*.npz
+results/_cache/
+.mutation_work/

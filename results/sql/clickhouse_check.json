@@ -1,0 +1,82 @@
+{
+  "image": "clickhouse/clickhouse-server:24.8",
+  "container": "bew-clickhouse",
+  "memory_limit": "1g",
+  "templates": {
+    "01_cohort_fade_curves": {
+      "rows_a": 51,
+      "rows_b": 51,
+      "rows_unmatched": 0,
+      "max_abs_diff": 0.0,
+      "mismatched_columns": [],
+      "equal": true
+    },
+    "02_knee_candidates": {
+      "rows_a": 124,
+      "rows_b": 124,
+      "rows_unmatched": 0,
+      "max_abs_diff": 0.0,
+      "mismatched_columns": [],
+      "equal": true
+    },
+    "03_ir_vs_capacity": {
+      "rows_a": 124,
+      "rows_b": 124,
+      "rows_unmatched": 0,
+      "max_abs_diff": 0.0,
+      "mismatched_columns": [],
+      "equal": true
+    },
+    "04_early_feature_ranking": {
+      "rows_a": 20,
+      "rows_b": 20,
+      "rows_unmatched": 0,
+      "max_abs_diff": 0.0,
+      "mismatched_columns": [],
+      "equal": true
+    },
+    "05_survival_curve": {
+      "rows_a": 72,
+      "rows_b": 72,
+      "rows_unmatched": 0,
+      "max_abs_diff": 0.0,
+      "mismatched_columns": [],
+      "equal": true
+    },
+    "06_data_quality": {
+      "rows_a": 124,
+      "rows_b": 124,
+      "rows_unmatched": 0,
+      "max_abs_diff": 0.0,
+      "mismatched_columns": [],
+      "equal": true
+    },
+    "07_policy_leaderboard": {
+      "rows_a": 69,
+      "rows_b": 69,
+      "rows_unmatched": 0,
+      "max_abs_diff": 0.0,
+      "mismatched_columns": [],
+      "equal": true
+    },
+    "08_early_failure_screen": {
+      "rows_a": 124,
+      "rows_b": 124,
+      "rows_unmatched": 0,
+      "max_abs_diff": 0.0,
+      "mismatched_columns": [],
+      "equal": true
+    }
+  },
+  "clickhouse_version": "24.8.14.39",
+  "loaded_rows": {
+    "cells": 124,
+    "cycles": 100501,
+    "early_features": 2480,
+    "knee_labels": 124
+  },
+  "n_templates": 8,
+  "n_templates_equal": 8,
+  "max_abs_diff_all": 0.0,
+  "container_removed": true
+}

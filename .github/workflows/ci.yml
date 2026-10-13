@@ -1,0 +1,25 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BEW_DATA_ROOT: /tmp/no-real-data   # CI never downloads data; real-data tests skip
+      OMP_NUM_THREADS: "2"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: synthetic fixture is reproducible
+        run: |
+          python scripts/make_fixture.py
+          git diff --exit-code tests/fixtures
+      - run: python -m pytest -q

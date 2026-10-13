@@ -1,0 +1,17 @@
+[project]
+name = "battery-early-warning"
+version = "0.1.0"
+description = "Early-life cycle-life prediction, online knee warning and failure-case library on public battery data"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy==2.4.6", "scipy==1.17.1", "pandas==3.0.6", "h5py==3.16.0", "scikit-learn==1.9.1",
+    "matplotlib==3.11.2", "duckdb==1.5.6", "pyarrow==26.0.0",
+]
+
+[project.optional-dependencies]
+test = ["pytest==9.1.1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-p no:cacheprovider"
+filterwarnings = ["ignore::sklearn.exceptions.ConvergenceWarning"]

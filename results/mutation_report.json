@@ -1,0 +1,204 @@
+{
+  "baseline_tests_passed": 62,
+  "total": 30,
+  "caught": 30,
+  "mutations": [
+    {
+      "file": "bew/features.py",
+      "bug": "leakage: summary features read 50 cycles past k",
+      "caught": true,
+      "first_failing_test": "tests/test_features.py::test_no_future_leakage_summary_and_curves"
+    },
+    {
+      "file": "bew/features.py",
+      "bug": "leakage: delta Q uses the discharge curve of cycle k+1",
+      "caught": true,
+      "first_failing_test": "tests/test_features.py::test_no_future_leakage_summary_and_curves"
+    },
+    {
+      "file": "bew/features.py",
+      "bug": "off-by-one: Qdlin row r mapped to cycle r instead of r+1",
+      "caught": true,
+      "first_failing_test": "tests/test_features.py::test_no_future_leakage_summary_and_curves"
+    },
+    {
+      "file": "bew/features.py",
+      "bug": "wrong reference cycle for delta Q (11 instead of 10)",
+      "caught": true,
+      "first_failing_test": "tests/test_features.py::test_known_feature_values_and_units"
+    },
+    {
+      "file": "bew/features.py",
+      "bug": "units: IR reported in mOhm where ohm is expected",
+      "caught": true,
+      "first_failing_test": "tests/test_features.py::test_past_change_does_change_features"
+    },
+    {
+      "file": "bew/cleaning.py",
+      "bug": "cleaning: impossible capacities no longer masked",
+      "caught": true,
+      "first_failing_test": "tests/test_features.py::test_cleaning_masks_impossible_values"
+    },
+    {
+      "file": "bew/splits.py",
+      "bug": "split: wrong extra test cell (duplicate / missing cell)",
+      "caught": true,
+      "first_failing_test": "tests/test_loader.py::test_tables_and_split"
+    },
+    {
+      "file": "bew/splits.py",
+      "bug": "split: cell 83 in both train and test",
+      "caught": true,
+      "first_failing_test": "tests/test_splits.py::test_paper_split_sizes_and_membership"
+    },
+    {
+      "file": "bew/splits.py",
+      "bug": "split by row instead of by cell",
+      "caught": true,
+      "first_failing_test": "tests/test_splits.py::test_random_group_splits_are_by_group"
+    },
+    {
+      "file": "bew/warning.py",
+      "bug": "off-by-one in lead time",
+      "caught": true,
+      "first_failing_test": "tests/test_warning.py::test_evaluate_alarm_lead_time_arithmetic"
+    },
+    {
+      "file": "bew/warning.py",
+      "bug": "off-by-one in consecutive-flag alarm rule",
+      "caught": true,
+      "first_failing_test": "tests/test_warning.py::test_first_alarm_needs_consecutive_flags"
+    },
+    {
+      "file": "bew/warning.py",
+      "bug": "false-alarm window on the wrong side of knee onset",
+      "caught": true,
+      "first_failing_test": "tests/test_warning.py::test_evaluate_alarm_lead_time_arithmetic"
+    },
+    {
+      "file": "bew/warning.py",
+      "bug": "alarm exactly at EOL counted as a warning",
+      "caught": true,
+      "first_failing_test": "tests/test_warning.py::test_evaluate_alarm_lead_time_arithmetic"
+    },
+    {
+      "file": "bew/warning.py",
+      "bug": "leakage: centred (non-causal) smoothing online",
+      "caught": true,
+      "first_failing_test": "tests/test_warning.py::test_causal_smooth_uses_past_only"
+    },
+    {
+      "file": "bew/warning.py",
+      "bug": "leakage: trailing slope window includes the next cycle",
+      "caught": true,
+      "first_failing_test": "tests/test_warning.py::test_detectors_are_causal[slope]"
+    },
+    {
+      "file": "bew/warning.py",
+      "bug": "leakage: CUSUM reference statistics computed over the whole life",
+      "caught": true,
+      "first_failing_test": "tests/test_warning.py::test_online_statistics_ignore_the_future[<lambda>3]"
+    },
+    {
+      "file": "bew/warning.py",
+      "bug": "leakage: threshold baseline reference level from the whole life",
+      "caught": true,
+      "first_failing_test": "tests/test_warning.py::test_online_statistics_ignore_the_future[<lambda>4]"
+    },
+    {
+      "file": "bew/severson_loader.py",
+      "bug": "loader: carried-over cycles not renumbered",
+      "caught": true,
+      "first_failing_test": "tests/test_loader.py::test_assemble_matches_official_loader"
+    },
+    {
+      "file": "bew/severson_loader.py",
+      "bug": "loader: wrong cycle-life extension for a carried-over cell",
+      "caught": true,
+      "first_failing_test": "tests/test_loader.py::test_assemble_matches_official_loader"
+    },
+    {
+      "file": "bew/severson_loader.py",
+      "bug": "loader: a noisy batch-3 cell kept",
+      "caught": true,
+      "first_failing_test": "tests/test_loader.py::test_assemble_matches_official_loader"
+    },
+    {
+      "file": "bew/severson_loader.py",
+      "bug": "EOL rule: <= instead of < 0.88 Ah",
+      "caught": true,
+      "first_failing_test": "tests/test_loader.py::test_eol_rule_boundary"
+    },
+    {
+      "file": "bew/models.py",
+      "bug": "metric: percentage error relative to prediction",
+      "caught": true,
+      "first_failing_test": "tests/test_models.py::test_metrics_by_hand"
+    },
+    {
+      "file": "bew/models.py",
+      "bug": "model output left in log10 space",
+      "caught": true,
+      "first_failing_test": "tests/test_models.py::test_regression_back_transforms_log_target"
+    },
+    {
+      "file": "bew/knee.py",
+      "bug": "knee onset searched after the knee point",
+      "caught": true,
+      "first_failing_test": "tests/test_warning.py::test_knee_labels_on_synthetic_curve"
+    },
+    {
+      "file": "bew/nasa_eis.py",
+      "bug": "NASA: discharge counter wrong",
+      "caught": true,
+      "first_failing_test": "tests/test_nasa.py::test_load_cell_pairs_impedance_with_previous_discharge"
+    },
+    {
+      "file": "bew/sql_layer.py",
+      "bug": "engine comparison can never report a numeric mismatch",
+      "caught": true,
+      "first_failing_test": "tests/test_sql.py::test_compare_frames_detects_difference"
+    },
+    {
+      "file": "sql/duckdb/04_early_feature_ranking.sql",
+      "bug": "SQL: feature ranking leaks test cells",
+      "caught": true,
+      "first_failing_test": "tests/test_sql.py::test_feature_ranking_uses_train_cells_only"
+    },
+    {
+      "file": "sql/duckdb/02_knee_candidates.sql",
+      "bug": "SQL: knee screen sign error",
+      "caught": true,
+      "first_failing_test": "tests/test_sql.py::test_all_templates_run"
+    },
+    {
+      "file": "bew/report.py",
+      "bug": "README: integers truncated instead of rounded",
+      "caught": true,
+      "first_failing_test": "tests/test_readme_numbers.py::test_readme_is_rendered_from_results"
+    },
+    {
+      "file": "bew/report.py",
+      "bug": "README: number pulled from the wrong result",
+      "caught": true,
+      "first_failing_test": "tests/test_readme_numbers.py::test_readme_is_rendered_from_results"
+    }
+  ],
+  "history": [
+    {
+      "caught": 27,
+      "total": 28,
+      "missed": [
+        "leakage: centred (non-causal) smoothing online"
+      ]
+    },
+    {
+      "caught": 28,
+      "total": 30,
+      "missed": [
+        "leakage: CUSUM reference statistics computed over the whole life",
+        "leakage: threshold baseline reference level from the whole life"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "n_impedance_ops": 887,
+  "n_with_prior_discharge": 886,
+  "n_discharges": 636,
+  "per_cell": {
+    "B0005": {
+      "n_ops": 278,
+      "re_start_mohm": 45.10114851143001,
+      "re_end_mohm": 57.823749393303174,
+      "rct_start_mohm": 69.45627304536995,
+      "rct_end_mohm": 82.52211755101288,
+      "cap_start_ah": 1.8470259949329193,
+      "cap_end_ah": 1.288003392619118,
+      "spearman_re_vs_capacity": -0.7935019052116604,
+      "spearman_rct_vs_capacity": -0.8119513137263135,
+      "partial_spearman_re_vs_capacity_given_discharge_no": 0.11874896010278913,
+      "partial_spearman_rct_vs_capacity_given_discharge_no": -0.06593512357442387
+    },
+    "B0006": {
+      "n_ops": 278,
+      "re_start_mohm": 61.23359021000344,
+      "re_end_mohm": 74.29181207917377,
+      "rct_start_mohm": 78.5415394665875,
+      "rct_end_mohm": 101.45770673563659,
+      "cap_start_ah": 1.9575499080884022,
+      "cap_end_ah": 1.1644009557372264,
+      "spearman_re_vs_capacity": -0.9341035902096354,
+      "spearman_rct_vs_capacity": -0.9272018882838289,
+      "partial_spearman_re_vs_capacity_given_discharge_no": -0.0004143504843713788,
+      "partial_spearman_rct_vs_capacity_given_discharge_no": -0.2540963543680009
+    },
+    "B0007": {
+      "n_ops": 278,
+      "re_start_mohm": 39.71312292013592,
+      "re_end_mohm": 64.92066764951248,
+      "rct_start_mohm": 61.80654339682964,
+      "rct_end_mohm": 91.3267326241943,
+      "cap_start_ah": 1.8807805437609766,
+      "cap_end_ah": 1.4063358479692922,
+      "spearman_re_vs_capacity": -0.9621013817147519,
+      "spearman_rct_vs_capacity": -0.9327446422239203,
+      "partial_spearman_re_vs_capacity_given_discharge_no": 0.10536294249515218,
+      "partial_spearman_rct_vs_capacity_given_discharge_no": -0.031560324910166554
+    },
+    "B0018": {
+      "n_ops": 52,
+      "re_start_mohm": 62.607013925682395,
+      "re_end_mohm": 65.21856379431411,
+      "rct_start_mohm": 94.6846935443713,
+      "rct_end_mohm": 91.1517651919059,
+      "cap_start_ah": 1.8431955317089987,
+      "cap_end_ah": 1.3589854739373584,
+      "spearman_re_vs_capacity": -0.7566598388236645,
+      "spearman_rct_vs_capacity": -0.10403859327540457,
+      "partial_spearman_re_vs_capacity_given_discharge_no": 0.029608778109524884,
+      "partial_spearman_rct_vs_capacity_given_discharge_no": 0.0006190143239196812
+    }
+  },
+  "caveat": "4 lab cells, single chemistry/protocol family; correlations are descriptive.",
+  "range": {
+    "spearman_re_min": -0.9621013817147519,
+    "spearman_re_max": -0.7566598388236645,
+    "spearman_rct_min": -0.9327446422239203,
+    "spearman_rct_max": -0.10403859327540457,
+    "partial_abs_max": 0.2540963543680009
+  },
+  "leave_one_cell_out": {
+    "re_rct": [
+      {
+        "held_out": "B0005",
+        "rmse_ah": 0.17256294946547082
+      },
+      {
+        "held_out": "B0006",
+        "rmse_ah": 0.25466981749366097
+      },
+      {
+        "held_out": "B0007",
+        "rmse_ah": 0.08623768417059578
+      },
+      {
+        "held_out": "B0018",
+        "rmse_ah": 0.2313704981944568
+      }
+    ],
+    "delta_re_rct": [
+      {
+        "held_out": "B0005",
+        "rmse_ah": 0.13010619685023236
+      },
+      {
+        "held_out": "B0006",
+        "rmse_ah": 0.24253060136318558
+      },
+      {
+        "held_out": "B0007",
+        "rmse_ah": 0.25180520557179586
+      },
+      {
+        "held_out": "B0018",
+        "rmse_ah": 0.31772099094903306
+      }
+    ],
+    "discharge_count": [
+      {
+        "held_out": "B0005",
+        "rmse_ah": 0.02674450690004518
+      },
+      {
+        "held_out": "B0006",
+        "rmse_ah": 0.1036548205467465
+      },
+      {
+        "held_out": "B0007",
+        "rmse_ah": 0.11516630037932395
+      },
+      {
+        "held_out": "B0018",
+        "rmse_ah": 0.12013674916067008
+      }
+    ]
+  },
+  "loco_mean_rmse_ah": {
+    "re_rct": 0.18621023733104608,
+    "delta_re_rct": 0.23554074868356173,
+    "discharge_count": 0.09142559424669643
+  }
+}

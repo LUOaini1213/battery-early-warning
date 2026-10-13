@@ -1,0 +1,10 @@
+# exact versions used to produce results/ (Python 3.11)
+numpy==2.4.6
+scipy==1.17.1
+pandas==3.0.6
+h5py==3.16.0
+scikit-learn==1.9.1
+matplotlib==3.11.2
+duckdb==1.5.6
+pyarrow==26.0.0
+pytest==9.1.1

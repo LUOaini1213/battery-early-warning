@@ -1,0 +1,20 @@
+{
+  "n_cells_screened": 124,
+  "n_cases": 25,
+  "signature_counts": {
+    "early_knee": 6,
+    "life_overpredicted": 1,
+    "life_underpredicted": 1,
+    "ir_jump": 3,
+    "temperature_step": 11,
+    "noisy_capacity": 6,
+    "invalid_values": 4
+  },
+  "rules": {
+    "early_knee": "knee onset < 30% of life",
+    "life_overpredicted": "observed/predicted < 0.70",
+    "life_underpredicted": "observed/predicted > 1.40",
+    "ir_jump / temperature_step / noisy_capacity": "cohort robust z > 5 (noisy also: >= 5 spikes)",
+    "invalid_values": "any discharge capacity > 1.2 x nominal"
+  }
+}
