@@ -1,6 +1,7 @@
 # Data sources, licences and provenance
 
-Raw data is never stored in this repository. It lives under `BEW_DATA_ROOT` (default `D:/data`).
+Raw data is never stored in this repository. It lives under `BEW_DATA_ROOT` (default: the
+git-ignored `data/` folder of this repo).
 SHA-256 hashes of every raw file are written to `results/provenance.json` by `run_all.py`.
 The only data committed here is (a) a small **synthetic** fixture under `tests/fixtures/` and
 (b) derived results (aggregate metrics, per-cell summary tables and plots) under `results/`.
@@ -22,7 +23,8 @@ The only data committed here is (a) a small **synthetic** fixture under `tests/f
 - **What was downloaded:** the three per-batch MATLAB structs (the smallest official form that has
   both per-cycle summaries and the interpolated discharge curves; the alternative "BEEP structured
   data" zip is 27.9 GB). Downloaded from `https://data.matr.io/1/api/v1/file/<file_id>/download`
-  on 2026-10-13 to `D:\data\severson2019\raw\`:
+  on 2026-10-13 to `$BEW_DATA_ROOT/severson2019/raw/`. `run_all.py` checks each file against the
+  size and SHA-256 below (also stored in `bew/config.py`) and stops on a mismatch:
 
   | file | file_id | bytes | SHA-256 |
   |---|---|---|---|
@@ -37,7 +39,7 @@ The only data committed here is (a) a small **synthetic** fixture under `tests/f
   charge-time placeholders are masked (`bew/cleaning.py`). Only per-cycle summaries and the
   interpolated discharge curves of cycles 1–100 are extracted.
 - **Derived tables** (`cells.parquet`, `cycles.parquet`, `qdlin_first100.npz`) are written next to
-  the raw files in `D:\data\severson2019\derived\` and are not committed.
+  the raw files in `$BEW_DATA_ROOT/severson2019/derived/` and are not committed.
 
 ## 2. NASA PCoE Battery Data Set (secondary, mechanism illustration only)
 
@@ -51,8 +53,10 @@ The only data committed here is (a) a small **synthetic** fixture under `tests/f
 - **Citation:** B. Saha and K. Goebel (2007). "Battery Data Set", NASA Prognostics Data Repository,
   NASA Ames Research Center, Moffett Field, CA.
 - **Files used:** B0005.mat, B0006.mat, B0007.mat, B0018.mat, copied (read-only source) from an
-  earlier local download of the same archive to `D:\data\nasa_pcoe\`. Hashes (identical to the
-  hashes recorded at that download):
+  earlier local download of the same archive to `$BEW_DATA_ROOT/nasa_pcoe/`. They are not
+  downloaded by `run_all.py`: extract them by hand from the inner archive above. `run_all.py`
+  checks that all four are present before it downloads anything, and checks them against these
+  hashes (identical to the hashes recorded at that download):
 
   | file | bytes | SHA-256 |
   |---|---|---|

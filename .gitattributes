@@ -1,1 +1,8 @@
+# text files are stored and checked out with LF on every OS
+* text=auto eol=lf
+# generated binary results
+*.png binary
+*.npz binary
+*.mat binary
+# the synthetic fixture is diffed byte for byte in CI
 tests/fixtures/*.csv -text

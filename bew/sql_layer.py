@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 
 from .config import REPO
+from .warning import evaluate_alarm, summarize
 
 SQL_DIR = REPO / "sql"
 CELL_COLS = ["cell_id", "batch", "policy", "c1", "q1", "c2", "split", "cycle_life", "carried_over"]
@@ -78,6 +79,37 @@ def compare_frames(a: pd.DataFrame, b: pd.DataFrame, keys: list[str], atol: floa
             "equal": only == 0 and not mismatched}
 
 
+KNEE_TOL = 50.0  # same scoring rule as warning_experiment.TOL (section 2 of the README)
+
+
+def score_knee_screen(cand: pd.DataFrame, knees: pd.DataFrame, tol: float = KNEE_TOL) -> dict:
+    """Score the SQL knee screen with the section-2 rule: its first candidate cycle is the alarm.
+
+    `cand` is the output of 02_knee_candidates (one row per flagged cell), `knees` the knee labels
+    (index cell_id; columns split, knee_onset, eol). Cells without a candidate count as missed.
+    Returns summaries over all cells and over the non-training cells."""
+    first = cand.set_index("cell_id")["first_candidate_cycle"]
+    rows = []
+    for cid, r in knees.iterrows():
+        alarm = float(first[cid]) if cid in first.index else float("nan")
+        rows.append({"cell_id": cid, "split": r["split"],
+                     **evaluate_alarm(alarm, float(r["knee_onset"]), float(r["eol"]), tol)})
+    ev = pd.DataFrame(rows)
+    return {"tolerance_cycles": tol, "all": _plain(summarize(ev)),
+            "test": _plain(summarize(ev[ev["split"] != "train"]))}
+
+
+def _plain(d: dict) -> dict:
+    """JSON-safe copy: numpy floats -> float, NaN -> None."""
+    out = {}
+    for k, v in d.items():
+        if isinstance(v, (float, np.floating)):
+            v = float(v)
+            v = v if np.isfinite(v) else None
+        out[k] = v
+    return out
+
+
 def run(cells, cycles, features, knees, preds: pd.DataFrame, out: Path) -> dict:
     out.mkdir(parents=True, exist_ok=True)
     tbls = tables(cells, cycles, features, knees)
@@ -94,6 +126,7 @@ def run(cells, cycles, features, knees, preds: pd.DataFrame, out: Path) -> dict:
     k = res["02_knee_candidates"]
     summary["knee_candidates_cells_flagged_before_eol"] = int((k["lead_to_eol"] > 0).sum())
     summary["knee_candidates_median_lead_to_eol"] = float(k.loc[k["lead_to_eol"] > 0, "lead_to_eol"].median())
+    summary["knee_candidates_scored"] = score_knee_screen(k, knees)
     con.close()
     (out / "summary.json").write_text(json.dumps(summary, indent=2))
     return summary

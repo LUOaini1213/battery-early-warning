@@ -4,6 +4,23 @@ Early-life cycle-life prediction, online knee warning, a failure-case library an
 layer, built on the public Severson et al. (2019) fast-charging dataset ({{n_cells}} commercial
 LFP/graphite 18650 cells) plus four NASA PCoE lab cells with impedance data.
 
+**Findings** (all numbers rendered from `results/` and re-checked by the tests):
+
+- **Early prediction reproduces the paper's baseline, not its best model.** The one-feature variance
+  model has primary-test RMSE {{var_rmse_pt}} cycles (paper: {{paper_var_rmse_pt}}); my reconstructed
+  full model gets {{full_rmse_pt}} (paper: {{paper_full_rmse_pt}}), and a random forest is worse than
+  the linear models on both test sets.
+- **Fancier knee detectors do not clearly beat a naive threshold.** On {{w_slope_n}} held-out cells,
+  "capacity < {{w_thr_frac}}% of early level" warns a median {{w_thr_lead}} cycles before end of life with
+  {{w_thr_fa}}% false alarms; the rolling-slope detector has {{w_slope_fa}}% false alarms but warns later
+  ({{w_slope_lead}} cycles); CUSUM warns earliest ({{w_cusum_lead}}) with {{w_cusum_fa}}% false alarms.
+- **Impedance adds no visible information in 4 NASA cells:** Re+Rct predict capacity worse
+  (leave-one-cell-out RMSE {{na_loco_rr}} Ah) than the discharge count alone ({{na_loco_dc}} Ah).
+- **Limits:** lab cells only, lead times in cycles of one test protocol, and the failure-case root
+  causes are unverified hypotheses.
+
+![Predicted vs observed cycle life](results/early_prediction/pred_vs_obs.png)
+
 > **What this is.** A personal portfolio project built in October 2026 with AI assistance (code
 > and text were drafted with an AI coding assistant and checked by running them). All data is
 > public. Every result number in this README is generated from `results/` by `run_all.py`, and
@@ -23,16 +40,18 @@ ClickHouse 两套 SQL 模板并核对结果一致。不涉及 BMS 部署、专�
 ## Reproduce
 
 ```bash
-python -m venv .venv && .venv/Scripts/pip install -r requirements.txt   # or: uv venv && uv pip install -r requirements.txt
-python run_all.py --download        # fetches {{raw_gb}} GB from data.matr.io into $BEW_DATA_ROOT (default D:/data);
-                                     # the 4 NASA files go in $BEW_DATA_ROOT/nasa_pcoe (see DATA_SOURCES.md)
+python -m venv .venv && . .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt                 # Python 3.11; or: uv venv && uv pip install -r requirements.txt
+python run_all.py --download        # fetches {{raw_gb}} GB from data.matr.io into $BEW_DATA_ROOT (default ./data, git-ignored);
+                                     # the 4 NASA files must be placed by hand in $BEW_DATA_ROOT/nasa_pcoe first
+                                     # (see DATA_SOURCES.md); run_all.py stops before downloading if they are missing
 python -m pytest                     # unit tests (CI runs these on a synthetic fixture)
 python scripts/verify_clickhouse.py  # optional: needs Docker; runs the ClickHouse templates and compares with DuckDB
 python scripts/mutation_test.py      # optional: breaks the code on purpose and checks the tests notice
 ```
 
-Raw data never enters the repo. Every downloaded file is SHA-256 hashed into
-`results/provenance.json`; licences and citations are in [DATA_SOURCES.md](DATA_SOURCES.md).
+Raw data never enters the repo. Every raw file is SHA-256 hashed, checked against the published
+hashes (run_all.py stops on a mismatch) and recorded in `results/provenance.json`; licences and citations are in [DATA_SOURCES.md](DATA_SOURCES.md).
 
 ## 1. Early prediction from the first 100 cycles
 
@@ -108,7 +127,7 @@ cycles before knee onset and before EOL, a *false alarm* if earlier, *missed* ot
 
 | detector (test cells) | true warning % | false alarm % | missed | median lead to EOL | 25th pct lead | median delay after knee onset |
 |---|---|---|---|---|---|---|
-| capacity < 95% of early level (naive baseline) | {{w_thr_tw}} | {{w_thr_fa}} | {{w_thr_miss}} | {{w_thr_lead}} | {{w_thr_lead25}} | {{w_thr_delay}} |
+| capacity < {{w_thr_frac}}% of early level (naive baseline) | {{w_thr_tw}} | {{w_thr_fa}} | {{w_thr_miss}} | {{w_thr_lead}} | {{w_thr_lead25}} | {{w_thr_delay}} |
 | rolling slope (trailing OLS fade rate) | {{w_slope_tw}} | {{w_slope_fa}} | {{w_slope_miss}} | {{w_slope_lead}} | {{w_slope_lead25}} | {{w_slope_delay}} |
 | CUSUM on one-cycle capacity drops | {{w_cusum_tw}} | {{w_cusum_fa}} | {{w_cusum_miss}} | {{w_cusum_lead}} | {{w_cusum_lead25}} | {{w_cusum_delay}} |
 | model-based: quadratic forecast of cycles to 0.88 Ah | {{w_fcst_tw}} | {{w_fcst_fa}} | {{w_fcst_miss}} | {{w_fcst_lead}} | {{w_fcst_lead25}} | {{w_fcst_delay}} |
@@ -122,6 +141,8 @@ no false alarms or misses on the test cells but warn later. The naive capacity t
 lead time than both of them at the cost of {{w_thr_fa}}% false alarms; in this dataset the fancier
 detectors do not clearly beat it. Lead times are in cycles
 of this lab protocol, not field time. Files: `results/warning/`.
+
+![Train-grid trade-off and selected settings on the test cells](results/warning/tradeoff.png)
 
 ## 3. Failure-case library
 
@@ -152,8 +173,12 @@ information. Four cells cannot settle this. Files: `results/nasa_eis/`.
 fade curves, knee candidates (trailing-window regression in a window function), IR vs capacity,
 early-life feature ranking (training cells only), survival by cycle, data quality, charging-policy
 leaderboard, and an early-failure screen that fits the variance model in pure SQL (it matches the
-Python model to {{sql_py_diff}} cycles). The SQL knee screen flags {{sql_knee_flagged}} cells before
-EOL with median lead {{sql_knee_lead}} cycles.
+Python model to {{sql_py_diff}} cycles). The SQL knee screen (rolling-slope rule on raw, not
+smoothed, capacity; window and threshold copied from the Python detector's tuned setting, which a test
+checks) flags {{sql_knee_flagged}} cells before EOL with median lead {{sql_knee_lead}} cycles. Scored with
+the section-2 rule over all {{sql_knee_n}} cells (training cells included, since the threshold was tuned
+on them): {{sql_knee_tw}}% true warnings, {{sql_knee_fa}}% false alarms, median {{sql_knee_delay}} cycles
+after knee onset.
 `scripts/verify_clickhouse.py` loads the same tables into ClickHouse {{ch_version}} (Docker, 1 GB
 memory cap), runs every template and compares with DuckDB: {{ch_equal}} of {{ch_total}} templates give
 identical results at the precision the templates round to (up to 6 decimals; max absolute
@@ -163,7 +188,11 @@ difference {{ch_maxdiff}}); the container is removed afterwards.
 
 `python -m pytest`: loaders (on synthetic MATLAB-v7.3-style files), features with a future-leakage
 check, splits (no cell on both sides), lead-time arithmetic, knee labels, SQL templates, NASA loader
-and README numbers. Mutation check: `scripts/mutation_test.py` applied {{mu_total}} deliberate bugs
+and README numbers. Because the real data cannot run in CI, `tests/test_pipelines_smoke.py` runs the
+experiment pipelines themselves (early prediction, warning grid search, failure cases, SQL layer) on a
+synthetic 24-cell cohort and checks that every results key the README reads is still written; other
+tests pin the SQL knee screen's window/threshold to the tuned Python setting, the raw-file hashes to
+DATA_SOURCES.md, and keep local machine paths out of tracked files. Mutation check: `scripts/mutation_test.py` applied {{mu_total}} deliberate bugs
 (leakage, wrong split, off-by-one lead time, wrong units, ...); the {{mu_tests}} tests caught
 {{mu_caught}} of {{mu_total}}. Earlier runs were weaker and are kept in
 `results/mutation_report.json`: the first caught {{mu_prev_caught}} of {{mu_prev_total}} (missed:

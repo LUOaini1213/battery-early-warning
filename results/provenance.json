@@ -23,7 +23,7 @@
         "file_id": "5c86bd64fa2ede00015ddbb2"
       }
     ],
-    "stored_at": "D:\\data\\severson2019\\raw"
+    "stored_at": "$BEW_DATA_ROOT/severson2019/raw"
   },
   "severson_total_gb": 8.269341808,
   "nasa_pcoe": {
@@ -50,7 +50,7 @@
         "sha256": "d1e6c923a43ea1c9666b3a90bbb521757a067fd60b4d17dbfaa49c50b179da69"
       }
     ],
-    "stored_at": "D:\\data\\nasa_pcoe"
+    "stored_at": "$BEW_DATA_ROOT/nasa_pcoe"
   },
   "written_utc": "2026-10-13T15:16:39+00:00"
 }

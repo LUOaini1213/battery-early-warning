@@ -77,6 +77,21 @@ MUTATIONS = [
      "README: integers truncated instead of rounded"),
     ("bew/report.py", '"n_primary": (EP, ["split_sizes", "primary_test"], "d0"),',
      '"n_primary": (EP, ["split_sizes", "train"], "d0"),', "README: number pulled from the wrong result"),
+    # added 2026-11: guards for the pipeline orchestration, raw-data hashes and SQL/README pins
+    ("bew/warning_experiment.py", '"knee_labels": {"median_knee_onset_frac_of_life":',
+     '"knee_labels": {"median_knee_onset_frac":', "pipeline: warning run() writes a renamed result key"),
+    ("bew/early_prediction.py", 'res["random_split_rmse"] = {k: {"median": float(np.median(v)), "p10"',
+     'res["random_split_rmse"] = {k: {"med": float(np.median(v)), "p10"', "pipeline: early-prediction run() drops a key"),
+    ("bew/provenance.py", 'elif f["sha256"] != want:', "elif False:",
+     "provenance: raw-file hash mismatch not detected"),
+    ("run_all.py", "    if gone:\n", "    if False:\n",
+     "run_all: missing NASA files only noticed after the 8 GB download"),
+    ("sql/duckdb/02_knee_candidates.sql", "w.var_x) > 0.0003", "w.var_x) > 0.0004",
+     "SQL: knee screen threshold drifts from the tuned Python setting"),
+    ("bew/sql_layer.py", 'float(r["eol"]), tol)', 'float(r["eol"]), tol + 500)',
+     "SQL knee screen scored with the wrong false-alarm tolerance"),
+    ("DATA_SOURCES.md", "lives under `BEW_DATA_ROOT` (default: the", "lives under `BEW_DATA_ROOT` (default `" + "D" + ":/data`, the",
+     "local machine path committed in a tracked file"),
 ]
 
 

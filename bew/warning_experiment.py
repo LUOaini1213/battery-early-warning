@@ -111,8 +111,11 @@ def run(cells: pd.DataFrame, cycles: pd.DataFrame, out: Path) -> dict:
 
 
 def _plot(series, lab, pc, out: Path) -> None:
-    ids = list(lab[lab["split"] != "train"].sort_values("eol").index[[2, 15, 40, 70]])
-    fig, axes = plt.subplots(1, 4, figsize=(15, 3.6))
+    test = lab[lab["split"] != "train"].sort_values("eol").index
+    pos = [2, 15, 40, 70] if len(test) > 70 else sorted(set(np.linspace(0, len(test) - 1, 4).astype(int)))
+    ids = list(test[pos])   # the real data (83 test cells) always uses positions 2, 15, 40, 70
+    fig, axes = plt.subplots(1, len(ids), figsize=(15, 3.6), squeeze=False)
+    axes = axes[0]
     colors = {"threshold_baseline": "#999999", "rolling_slope": "#1f6fb2", "cusum": "#2a9d55",
               "forecast_quadratic": "#d9822b"}
     for ax, cid in zip(axes, ids):

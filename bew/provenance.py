@@ -36,6 +36,22 @@ def hash_files(paths: list[Path], cache: Path | None = None) -> list[dict]:
     return out
 
 
+def check_hashes(files: list[dict], expected: dict[str, str]) -> list[str]:
+    """Compare hashed files with the published SHA-256 values; return one message per mismatch."""
+    bad = []
+    for f in files:
+        want = expected.get(f["name"])
+        if want is None:
+            bad.append(f"{f['name']}: no expected SHA-256 on record")
+        elif f["sha256"] != want:
+            bad.append(f"{f['name']}: SHA-256 {f['sha256']} != expected {want}")
+    return bad
+
+
+def missing_files(paths: list[Path]) -> list[Path]:
+    return [p for p in paths if not p.is_file()]
+
+
 def write_provenance(path: Path, payload: dict) -> None:
     payload = dict(payload)
     payload["written_utc"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
