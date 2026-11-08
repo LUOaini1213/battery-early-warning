@@ -1,8 +1,9 @@
 """Download the Severson et al. (2019) batch structs from the official data.matr.io API.
 
-Files are written to BEW_DATA_ROOT/severson2019/raw (default D:/data), never into the repo.
+Files are written to BEW_DATA_ROOT/severson2019/raw (default: the git-ignored data/ folder of this repo).
 Existing files with the expected byte size are skipped. Licence: CC BY 4.0 (see DATA_SOURCES.md).
 The NASA PCoE files are not downloaded here; see DATA_SOURCES.md for their official URL.
+run_all.py checks every file against the SHA-256 values in bew/config.py.
 """
 from __future__ import annotations
 

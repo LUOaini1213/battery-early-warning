@@ -22,13 +22,20 @@ config.limit_threads()
 
 from bew import early_prediction, failure_cases, nasa_eis, report, sql_layer, warning_experiment  # noqa: E402
 from bew.extract import extract_severson, load_derived  # noqa: E402
-from bew.provenance import hash_files, write_provenance  # noqa: E402
+from bew.provenance import check_hashes, hash_files, missing_files, write_provenance  # noqa: E402
 
 import pandas as pd  # noqa: E402
 
 
 def provenance(download: bool) -> dict:
     raw = config.SEVERSON_RAW
+    # check the hand-placed NASA files first, so a missing file fails before any 8 GB download/hash
+    nasa_paths = [config.NASA_RAW / f for f in config.NASA_FILES]
+    gone = missing_files(nasa_paths)
+    if gone:
+        sys.exit("missing NASA PCoE file(s): " + ", ".join(str(p) for p in gone)
+                 + "; they are not downloaded automatically: place B0005/6/7/18.mat in "
+                 f"{config.NASA_RAW} (see DATA_SOURCES.md section 2)")
     if download:
         from scripts.fetch_data import fetch_severson
         fetch_severson(raw)
@@ -41,9 +48,15 @@ def provenance(download: bool) -> dict:
             sys.exit(f"size mismatch for {p}: {p.stat().st_size} != {meta['size']}")
         files.append(p)
     sev = hash_files(files, cache=config.SEVERSON_DERIVED / "hash_cache.json")
+    bad = check_hashes(sev, {m["name"]: m["sha256"] for m in config.SEVERSON_BATCHES.values()})
+    if bad:
+        sys.exit("Severson raw file differs from the published hash: " + "; ".join(bad))
     config.SEVERSON_DERIVED.mkdir(parents=True, exist_ok=True)
     (config.SEVERSON_DERIVED / "hash_cache.json").write_text(json.dumps({"files": sev}, indent=2))
-    nasa = hash_files([config.NASA_RAW / f for f in config.NASA_FILES])
+    nasa = hash_files(nasa_paths)
+    bad = check_hashes(nasa, {n: m["sha256"] for n, m in config.NASA_EXPECTED.items()})
+    if bad:
+        sys.exit("NASA PCoE file differs from the published hash: " + "; ".join(bad))
     payload = {
         "severson2019": {
             "source": "https://data.matr.io/1/projects/5c48dd2bc625d700019f3204",
@@ -51,13 +64,13 @@ def provenance(download: bool) -> dict:
             "license": "CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/), stated site-wide on data.matr.io/1",
             "files": [dict(f, file_id=config.SEVERSON_BATCHES[b]["file_id"])
                       for f, b in zip(sev, config.SEVERSON_BATCHES)],
-            "stored_at": str(raw),
+            "stored_at": "$BEW_DATA_ROOT/severson2019/raw",
         },
         "severson_total_gb": sum(f["bytes"] for f in sev) / 1e9,
         "nasa_pcoe": {
             "source": "https://phm-datasets.s3.amazonaws.com/NASA/5.+Battery+Data+Set.zip "
                       "(archive member '1. BatteryAgingARC-FY08Q4.zip')",
-            "files": nasa, "stored_at": str(config.NASA_RAW),
+            "files": nasa, "stored_at": "$BEW_DATA_ROOT/nasa_pcoe",
         },
     }
     for d in payload["severson2019"]["files"] + payload["nasa_pcoe"]["files"]:

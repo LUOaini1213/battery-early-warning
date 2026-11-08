@@ -6,10 +6,17 @@ on:
 
 jobs:
   pytest:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
     env:
-      BEW_DATA_ROOT: /tmp/no-real-data   # CI never downloads data; real-data tests skip
+      BEW_DATA_ROOT: ${{ github.workspace }}/no-real-data   # CI never downloads data; real-data tests skip
       OMP_NUM_THREADS: "2"
     steps:
       - uses: actions/checkout@v4
@@ -22,4 +29,14 @@ jobs:
         run: |
           python scripts/make_fixture.py
           git diff --exit-code tests/fixtures
+      - name: README is the render of results/ (--check)
+        run: |
+          python run_all.py --readme-only
+          git diff --exit-code README.md results/headline.json
+      - name: no local machine paths in tracked text files
+        run: |
+          if git grep -nIE '(^|[^A-Za-z0-9])[A-Za-z]:[\\/]{1,2}[A-Za-z0-9_$.]|[\\/](Users|home)[\\/][A-Za-z0-9_.-]+[\\/]' \
+               -- . ':!tests/test_no_local_paths.py' ':!.github/workflows/ci.yml'; then
+            echo "local machine paths found (see above)"; exit 1
+          fi
       - run: python -m pytest -q

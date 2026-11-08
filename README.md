@@ -4,6 +4,23 @@ Early-life cycle-life prediction, online knee warning, a failure-case library an
 layer, built on the public Severson et al. (2019) fast-charging dataset (124 commercial
 LFP/graphite 18650 cells) plus four NASA PCoE lab cells with impedance data.
 
+**Findings** (all numbers rendered from `results/` and re-checked by the tests):
+
+- **Early prediction reproduces the paper's baseline, not its best model.** The one-feature variance
+  model has primary-test RMSE 138 cycles (paper: 138); my reconstructed
+  full model gets 125 (paper: 118), and a random forest is worse than
+  the linear models on both test sets.
+- **Fancier knee detectors do not clearly beat a naive threshold.** On 83 held-out cells,
+  "capacity < 95% of early level" warns a median 186 cycles before end of life with
+  2.4% false alarms; the rolling-slope detector has 0.0% false alarms but warns later
+  (142 cycles); CUSUM warns earliest (328) with 8.4% false alarms.
+- **Impedance adds no visible information in 4 NASA cells:** Re+Rct predict capacity worse
+  (leave-one-cell-out RMSE 0.186 Ah) than the discharge count alone (0.091 Ah).
+- **Limits:** lab cells only, lead times in cycles of one test protocol, and the failure-case root
+  causes are unverified hypotheses.
+
+![Predicted vs observed cycle life](results/early_prediction/pred_vs_obs.png)
+
 > **What this is.** A personal portfolio project built in October 2026 with AI assistance (code
 > and text were drafted with an AI coding assistant and checked by running them). All data is
 > public. Every result number in this README is generated from `results/` by `run_all.py`, and
@@ -23,16 +40,18 @@ ClickHouse 两套 SQL 模板并核对结果一致。不涉及 BMS 部署、专�
 ## Reproduce
 
 ```bash
-python -m venv .venv && .venv/Scripts/pip install -r requirements.txt   # or: uv venv && uv pip install -r requirements.txt
-python run_all.py --download        # fetches 8.27 GB from data.matr.io into $BEW_DATA_ROOT (default D:/data);
-                                     # the 4 NASA files go in $BEW_DATA_ROOT/nasa_pcoe (see DATA_SOURCES.md)
+python -m venv .venv && . .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt                 # Python 3.11; or: uv venv && uv pip install -r requirements.txt
+python run_all.py --download        # fetches 8.27 GB from data.matr.io into $BEW_DATA_ROOT (default ./data, git-ignored);
+                                     # the 4 NASA files must be placed by hand in $BEW_DATA_ROOT/nasa_pcoe first
+                                     # (see DATA_SOURCES.md); run_all.py stops before downloading if they are missing
 python -m pytest                     # unit tests (CI runs these on a synthetic fixture)
 python scripts/verify_clickhouse.py  # optional: needs Docker; runs the ClickHouse templates and compares with DuckDB
 python scripts/mutation_test.py      # optional: breaks the code on purpose and checks the tests notice
 ```
 
-Raw data never enters the repo. Every downloaded file is SHA-256 hashed into
-`results/provenance.json`; licences and citations are in [DATA_SOURCES.md](DATA_SOURCES.md).
+Raw data never enters the repo. Every raw file is SHA-256 hashed, checked against the published
+hashes (run_all.py stops on a mismatch) and recorded in `results/provenance.json`; licences and citations are in [DATA_SOURCES.md](DATA_SOURCES.md).
 
 ## 1. Early prediction from the first 100 cycles
 
@@ -123,6 +142,8 @@ lead time than both of them at the cost of 2.4% false alarms; in this dataset th
 detectors do not clearly beat it. Lead times are in cycles
 of this lab protocol, not field time. Files: `results/warning/`.
 
+![Train-grid trade-off and selected settings on the test cells](results/warning/tradeoff.png)
+
 ## 3. Failure-case library
 
 25 of 124 cells carry at least one signature
@@ -152,8 +173,12 @@ information. Four cells cannot settle this. Files: `results/nasa_eis/`.
 fade curves, knee candidates (trailing-window regression in a window function), IR vs capacity,
 early-life feature ranking (training cells only), survival by cycle, data quality, charging-policy
 leaderboard, and an early-failure screen that fits the variance model in pure SQL (it matches the
-Python model to 0.000 cycles). The SQL knee screen flags 124 cells before
-EOL with median lead 146 cycles.
+Python model to 0.000 cycles). The SQL knee screen (rolling-slope rule on raw, not
+smoothed, capacity; window and threshold copied from the Python detector's tuned setting, which a test
+checks) flags 124 cells before EOL with median lead 146 cycles. Scored with
+the section-2 rule over all 124 cells (training cells included, since the threshold was tuned
+on them): 100.0% true warnings, 0.0% false alarms, median 176 cycles
+after knee onset.
 `scripts/verify_clickhouse.py` loads the same tables into ClickHouse 24.8.14.39 (Docker, 1 GB
 memory cap), runs every template and compares with DuckDB: 8 of 8 templates give
 identical results at the precision the templates round to (up to 6 decimals; max absolute
@@ -163,9 +188,13 @@ difference 0.0e+00); the container is removed afterwards.
 
 `python -m pytest`: loaders (on synthetic MATLAB-v7.3-style files), features with a future-leakage
 check, splits (no cell on both sides), lead-time arithmetic, knee labels, SQL templates, NASA loader
-and README numbers. Mutation check: `scripts/mutation_test.py` applied 30 deliberate bugs
-(leakage, wrong split, off-by-one lead time, wrong units, ...); the 62 tests caught
-30 of 30. Earlier runs were weaker and are kept in
+and README numbers. Because the real data cannot run in CI, `tests/test_pipelines_smoke.py` runs the
+experiment pipelines themselves (early prediction, warning grid search, failure cases, SQL layer) on a
+synthetic 24-cell cohort and checks that every results key the README reads is still written; other
+tests pin the SQL knee screen's window/threshold to the tuned Python setting, the raw-file hashes to
+DATA_SOURCES.md, and keep local machine paths out of tracked files. Mutation check: `scripts/mutation_test.py` applied 37 deliberate bugs
+(leakage, wrong split, off-by-one lead time, wrong units, ...); the 84 tests caught
+37 of 37. Earlier runs were weaker and are kept in
 `results/mutation_report.json`: the first caught 27 of 28 (missed:
 "leakage: centred (non-causal) smoothing online"), the second 28 of 30 (missed: "leakage: CUSUM reference statistics computed over the whole life"
 and "leakage: threshold baseline reference level from the whole life"). Both times the causality tests only looked at thresholded alarm flags,

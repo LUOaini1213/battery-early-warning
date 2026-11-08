@@ -1,7 +1,7 @@
 {
-  "baseline_tests_passed": 62,
-  "total": 30,
-  "caught": 30,
+  "baseline_tests_passed": 84,
+  "total": 37,
+  "caught": 37,
   "mutations": [
     {
       "file": "bew/features.py",
@@ -61,7 +61,7 @@
       "file": "bew/warning.py",
       "bug": "off-by-one in lead time",
       "caught": true,
-      "first_failing_test": "tests/test_warning.py::test_evaluate_alarm_lead_time_arithmetic"
+      "first_failing_test": "tests/test_sql_params.py::test_sql_knee_screen_score_matches_committed_csvs"
     },
     {
       "file": "bew/warning.py",
@@ -73,7 +73,7 @@
       "file": "bew/warning.py",
       "bug": "false-alarm window on the wrong side of knee onset",
       "caught": true,
-      "first_failing_test": "tests/test_warning.py::test_evaluate_alarm_lead_time_arithmetic"
+      "first_failing_test": "tests/test_sql_params.py::test_sql_knee_screen_score_matches_committed_csvs"
     },
     {
       "file": "bew/warning.py",
@@ -91,7 +91,7 @@
       "file": "bew/warning.py",
       "bug": "leakage: trailing slope window includes the next cycle",
       "caught": true,
-      "first_failing_test": "tests/test_warning.py::test_detectors_are_causal[slope]"
+      "first_failing_test": null
     },
     {
       "file": "bew/warning.py",
@@ -169,7 +169,7 @@
       "file": "sql/duckdb/02_knee_candidates.sql",
       "bug": "SQL: knee screen sign error",
       "caught": true,
-      "first_failing_test": "tests/test_sql.py::test_all_templates_run"
+      "first_failing_test": "tests/test_pipelines_smoke.py::test_every_readme_key_is_written_by_the_pipelines"
     },
     {
       "file": "bew/report.py",
@@ -182,6 +182,48 @@
       "bug": "README: number pulled from the wrong result",
       "caught": true,
       "first_failing_test": "tests/test_readme_numbers.py::test_readme_is_rendered_from_results"
+    },
+    {
+      "file": "bew/warning_experiment.py",
+      "bug": "pipeline: warning run() writes a renamed result key",
+      "caught": true,
+      "first_failing_test": "tests/test_pipelines_smoke.py::test_every_readme_key_is_written_by_the_pipelines"
+    },
+    {
+      "file": "bew/early_prediction.py",
+      "bug": "pipeline: early-prediction run() drops a key",
+      "caught": true,
+      "first_failing_test": "tests/test_pipelines_smoke.py::test_every_readme_key_is_written_by_the_pipelines"
+    },
+    {
+      "file": "bew/provenance.py",
+      "bug": "provenance: raw-file hash mismatch not detected",
+      "caught": true,
+      "first_failing_test": "tests/test_provenance.py::test_check_hashes_flags_a_wrong_file"
+    },
+    {
+      "file": "run_all.py",
+      "bug": "run_all: missing NASA files only noticed after the 8 GB download",
+      "caught": true,
+      "first_failing_test": "tests/test_provenance.py::test_missing_nasa_files_stop_run_all_before_download"
+    },
+    {
+      "file": "sql/duckdb/02_knee_candidates.sql",
+      "bug": "SQL: knee screen threshold drifts from the tuned Python setting",
+      "caught": true,
+      "first_failing_test": "tests/test_sql.py::test_clickhouse_templates_only_differ_where_dialect_requires"
+    },
+    {
+      "file": "bew/sql_layer.py",
+      "bug": "SQL knee screen scored with the wrong false-alarm tolerance",
+      "caught": true,
+      "first_failing_test": "tests/test_sql_params.py::test_score_knee_screen_counts_false_alarms_and_misses"
+    },
+    {
+      "file": "DATA_SOURCES.md",
+      "bug": "local machine path committed in a tracked file",
+      "caught": true,
+      "first_failing_test": "tests/test_no_local_paths.py::test_no_local_paths_in_tracked_files"
     }
   ],
   "history": [
@@ -199,6 +241,11 @@
         "leakage: CUSUM reference statistics computed over the whole life",
         "leakage: threshold baseline reference level from the whole life"
       ]
+    },
+    {
+      "caught": 30,
+      "total": 30,
+      "missed": []
     }
   ]
 }

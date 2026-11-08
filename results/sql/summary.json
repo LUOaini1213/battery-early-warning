@@ -34,5 +34,32 @@
   "n_templates": 8,
   "sql_vs_python_variance_model_max_abs_diff_cycles": 0.0004972521368244998,
   "knee_candidates_cells_flagged_before_eol": 124,
-  "knee_candidates_median_lead_to_eol": 145.5
+  "knee_candidates_median_lead_to_eol": 145.5,
+  "knee_candidates_scored": {
+    "tolerance_cycles": 50.0,
+    "all": {
+      "n_cells": 124,
+      "true_warning": 124,
+      "false_alarm": 0,
+      "missed": 0,
+      "true_warning_rate": 100.0,
+      "false_alarm_rate": 0.0,
+      "median_lead_to_eol": 145.5,
+      "p25_lead_to_eol": 125.75,
+      "min_lead_to_eol": 47.0,
+      "median_delay_vs_onset": 176.0
+    },
+    "test": {
+      "n_cells": 83,
+      "true_warning": 83,
+      "false_alarm": 0,
+      "missed": 0,
+      "true_warning_rate": 100.0,
+      "false_alarm_rate": 0.0,
+      "median_lead_to_eol": 146.0,
+      "p25_lead_to_eol": 124.0,
+      "min_lead_to_eol": 47.0,
+      "median_delay_vs_onset": 231.0
+    }
+  }
 }
